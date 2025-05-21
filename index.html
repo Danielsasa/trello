@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tipo Trello </title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">    
+    <!-- Style CSS-->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<div class="container my-4">
+    <h1 class="mb-4">Prueba de Trello</h1>
+    <button class="btn btn-success mb-3" id="btnNuevaTarea">Agregar Tarea</button>
+    <div class="row table-responsive" id="tablero">
+        <!-- Columna Pendiente -->
+        <div class="col" id="pendiente">
+            <h3>
+                Pendiente
+                <span class="badge bg-warning text-dark" id="count-pendiente">0</span>
+            </h3>
+            <div class="lista-tareas"></div>
+        </div>
+        <!-- Columna En Progreso -->
+        <div class="col" id="en-progreso">
+            <h3>
+                En Progreso
+                <span class="badge bg-info text-dark" id="count-en-progreso">0</span>
+            </h3>
+            <div class="lista-tareas"></div>
+        </div>
+        <!-- Columna Terminada -->
+        <div class="col" id="terminada">
+            <h3>
+                Terminada
+                <span class="badge bg-success" id="count-terminada">0</span>
+            </h3>
+            <div class="lista-tareas"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para comentarios -->
+<div class="modal fade" id="modalComentario" tabindex="-1" aria-labelledby="modalComentarioLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalComentarioLabel">Agregar Comentario</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <textarea id="inputComentario" class="form-control" rows="3" placeholder="Escribe tu comentario"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" id="guardarComentario">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS y tu script -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<button class="btn btn-secondary mb-3" id="toggleDark">Modo oscuro/claro</button>
+</body>
+</html>
