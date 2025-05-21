@@ -62,31 +62,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 else if (t.prioridad === 'media') badgePrioridad = '<span class="badge bg-warning text-dark ms-2">Media</span>';
                 else if (t.prioridad === 'baja') badgePrioridad = '<span class="badge bg-success ms-2">Baja</span>';
 
-                // Insignia de urgente si la tarea es urgente
-                let badgeUrgente = t.urgente ? `<span class="badge bg-danger ms-2">Urgente</span>` : '';
                 // Botón para eliminar la tarea (siempre visible)
                 let btnEliminar = `<button class="btn btn-sm btn-outline-danger btn-eliminar" data-id="${t.id}" title="Eliminar tarea"><i class="bi bi-trash"></i> Eliminar</button>`;
-                // Botón para mover tarea según estado
-                let btnMover = '';
-                if (estado === 'pendiente') {
-                    btnMover = `<button class="btn btn-sm btn-outline-success mt-2 btn-mover" data-id="${t.id}" data-next="en progreso">Mover a En Progreso</button>`;
-                } else if (estado === 'en progreso') {
-                    btnMover = `<button class="btn btn-sm btn-outline-success mt-2 btn-mover" data-id="${t.id}" data-next="terminada">Mover a Terminada</button>`;
-                }
+
+                // Avatar y responsable
+                let avatar = `
+                    <span class="badge bg-secondary d-flex align-items-center gap-2" style="font-size:1em;">
+                        <img src="https://randomuser.me/api/portraits/lego/${t.id % 10}.jpg"
+                            alt="avatar" width="35" height="35" class="me-1 rounded-circle border border-light">
+                        ${t.responsable}
+                    </span>
+                `;
 
                 // Estructura de la tarjeta: botón eliminar arriba a la derecha
                 card.innerHTML = `
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <div>
-                                <h5 class="card-title mb-0">${t.titulo} ${badgeUrgente} ${badgePrioridad}</h5>
+                                <h5 class="card-title mb-0">${t.titulo} ${badgePrioridad}</h5>
                             </div>
                             ${btnEliminar}
                         </div>
                         <p class="card-text">${t.descripcion}</p>
-                        <span class="badge bg-secondary">${t.responsable}</span>
+                        ${avatar}
                         <button class="btn btn-sm btn-outline-primary mt-2 btn-comentario" data-id="${t.id}">Agregar comentario</button>
-                        ${btnMover}
                         <div class="comentarios mt-2">
                             ${(t.comentarios || []).map(c => `<div class="alert alert-info p-1 mb-1">${c}</div>`).join('')}
                         </div>
@@ -106,26 +105,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     tareaSeleccionada = tareas.find(t => t.id == btn.dataset.id);
                     inputComentario.value = '';
                     modalComentario.show();
-                });
-            });
-
-            // Asigna eventos a los botones de mover tarea de cada tarjeta
-            columna.querySelectorAll('.btn-mover').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const id = btn.dataset.id;
-                    const nextEstado = btn.dataset.next;
-                    fetch(`http://localhost:3000/tareas/${id}`, {
-                        method: 'PATCH',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ estado: nextEstado })
-                    })
-                    .then(res => {
-                        if (!res.ok) throw new Error('Error al mover la tarea');
-                        cargarTareas();
-                    })
-                    .catch(err => {
-                        alert('No se pudo mover la tarea: ' + err.message);
-                    });
                 });
             });
 
@@ -197,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Evento para agregar una nueva tarea (pregunta prioridad y si es urgente)
+    // Evento para agregar una nueva tarea (solo prioridad, sin urgente)
     btnNuevaTarea.addEventListener('click', () => {
         const titulo = prompt('Título de la tarea:');
         if (!titulo) return;
@@ -206,7 +185,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const responsable = prompt('Responsable:');
         if (!responsable) return;
         const prioridad = prompt('Prioridad (alta, media, baja):', 'media').toLowerCase();
-        const urgente = confirm('¿Esta tarea es urgente?');
 
         fetch('http://localhost:3000/tareas', {
             method: 'POST',
@@ -217,7 +195,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 responsable,
                 estado: 'pendiente',
                 comentarios: [],
-                urgente,
                 prioridad
             })
         })

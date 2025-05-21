@@ -16,6 +16,7 @@
 <div class="container my-4">
     <h1 class="mb-4">Prueba de Trello</h1>
     <button class="btn btn-success mb-3" id="btnNuevaTarea">Agregar Tarea</button>
+    <button class="btn btn-secondary mb-3" id="toggleDark">Modo oscuro/claro</button>
     <div class="row table-responsive" id="tablero">
         <!-- Columna Pendiente -->
         <div class="col" id="pendiente">
@@ -63,10 +64,9 @@
   </div>
 </div>
 
-<!-- Bootstrap JS y tu script -->
+<!-- Bootstrap JS, SortableJS y tu script -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="app.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-<button class="btn btn-secondary mb-3" id="toggleDark">Modo oscuro/claro</button>
+<script src="app.js"></script>
 </body>
 </html>
