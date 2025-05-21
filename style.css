@@ -1,0 +1,69 @@
+#pendiente {
+    background: #fffbe6;
+    border-radius: 12px;
+    border: 2px solid #ffe066;
+    padding: 16px;
+    min-height: 500px;
+}
+#en-progreso {
+    background: #e7f5ff;
+    border-radius: 12px;
+    border: 2px solid #74c0fc;
+    padding: 16px;
+    min-height: 500px;
+}
+#terminada {
+    background: #e6fcf5;
+    border-radius: 12px;
+    border: 2px solid #63e6be;
+    padding: 16px;
+    min-height: 500px;
+}
+h3 {
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+#pendiente h3 { color: #f59f00; }
+#en-progreso h3 { color: #228be6; }
+#terminada h3 { color: #12b886; }
+
+.card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    margin-bottom: 16px;
+    border: none;
+}
+
+.btn-comentario {
+    margin-right: 8px;
+}
+
+.btn-mover {
+    margin-top: 4px;
+}
+
+.lista-tareas {
+    min-height: 60px;
+}
+
+/* Animación sutil */
+.card-added {
+    animation: fadeIn 0.5s;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95);}
+    to { opacity: 1; transform: scale(1);}
+}
+
+/* Modo oscuro extra */
+body.bg-dark {
+    background: #181a1b !important;
+}
+.col.bg-dark {
+    background: #23272b !important;
+}
+.card.bg-dark {
+    background: #23272b !important;
+    border-color: #343a40 !important;
+}
