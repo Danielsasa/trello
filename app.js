@@ -23,21 +23,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Cargar tareas desde el servidor
+    // Guardar tareas en localStorage
+    function guardarTareas() {
+        localStorage.setItem('tareas', JSON.stringify(tareas));
+    }
+
+    // Cargar tareas desde localStorage
     function cargarTareas() {
-        fetch('http://localhost:3000/tareas')
-            .then(res => {
-                if (!res.ok) throw new Error('Error al cargar las tareas');
-                return res.json();
-            })
-            .then(data => {
-                tareas = data;
-                renderTareas();
-                activarDragAndDrop();
-            })
-            .catch(err => {
-                alert('No se pudieron cargar las tareas: ' + err.message);
-            });
+        tareas = JSON.parse(localStorage.getItem('tareas')) || [];
+        renderTareas();
+        activarDragAndDrop();
     }
 
     // Renderizar tareas y actualizar contadores
@@ -69,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 let avatar = `
                     <span class="badge bg-secondary d-flex align-items-center gap-2" style="font-size:1em;">
                         <img src="https://randomuser.me/api/portraits/lego/${t.id % 10}.jpg"
-                            alt="avatar" width="35" height="35" class="me-1 rounded-circle border border-light">
+                            alt="avatar" width="24" height="24" class="me-1 rounded-circle border border-light">
                         ${t.responsable}
                     </span>
                 `;
@@ -113,16 +108,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 btn.addEventListener('click', () => {
                     if (confirm('¿Seguro que deseas eliminar esta tarea?')) {
                         const id = btn.dataset.id;
-                        fetch(`http://localhost:3000/tareas/${id}`, {
-                            method: 'DELETE'
-                        })
-                        .then(res => {
-                            if (!res.ok) throw new Error('Error al eliminar la tarea');
-                            cargarTareas();
-                        })
-                        .catch(err => {
-                            alert('No se pudo eliminar la tarea: ' + err.message);
-                        });
+                        tareas = tareas.filter(t => t.id != id);
+                        guardarTareas();
+                        cargarTareas();
                     }
                 });
             });
@@ -143,11 +131,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (id === 'pendiente') nuevoEstado = 'pendiente';
                     if (id === 'en-progreso') nuevoEstado = 'en progreso';
                     if (id === 'terminada') nuevoEstado = 'terminada';
-                    fetch(`http://localhost:3000/tareas/${tareaId}`, {
-                        method: 'PATCH',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ estado: nuevoEstado })
-                    }).then(() => cargarTareas());
+                    const tarea = tareas.find(t => t.id == tareaId);
+                    if (tarea) {
+                        tarea.estado = nuevoEstado;
+                        guardarTareas();
+                        cargarTareas();
+                    }
                 }
             });
         });
@@ -159,20 +148,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const nuevoComentario = inputComentario.value.trim();
             const comentarios = tareaSeleccionada.comentarios || [];
             comentarios.push(nuevoComentario);
-
-            fetch(`http://localhost:3000/tareas/${tareaSeleccionada.id}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ comentarios })
-            })
-            .then(res => {
-                if (!res.ok) throw new Error('Error al guardar el comentario');
-                modalComentario.hide();
-                cargarTareas();
-            })
-            .catch(err => {
-                alert('No se pudo guardar el comentario: ' + err.message);
-            });
+            tareaSeleccionada.comentarios = comentarios;
+            guardarTareas();
+            modalComentario.hide();
+            cargarTareas();
         }
     });
 
@@ -186,25 +165,20 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!responsable) return;
         const prioridad = prompt('Prioridad (alta, media, baja):', 'media').toLowerCase();
 
-        fetch('http://localhost:3000/tareas', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                titulo,
-                descripcion,
-                responsable,
-                estado: 'pendiente',
-                comentarios: [],
-                prioridad
-            })
-        })
-        .then(res => {
-            if (!res.ok) throw new Error('Error al agregar la tarea');
-            cargarTareas();
-        })
-        .catch(err => {
-            alert('No se pudo agregar la tarea: ' + err.message);
+        // Generar un id único
+        const id = Date.now();
+
+        tareas.push({
+            id,
+            titulo,
+            descripcion,
+            responsable,
+            estado: 'pendiente',
+            comentarios: [],
+            prioridad
         });
+        guardarTareas();
+        cargarTareas();
     });
 
     // Inicializa la app cargando las tareas al cargar la página
